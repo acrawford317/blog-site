@@ -1,0 +1,56 @@
+.login a {
+    text-decoration: none;
+}
+
+.post-box {
+    padding: 30px;
+    border-bottom: 1px solid darkgray;
+    border-bottom-width: 70%;
+}
+
+.post-box h1{
+    font-size: 30px;
+}
+
+.post-box a {
+    text-decoration: none;
+    color: rgb(44, 85, 139);
+}
+
+/* Design for mobile first */
+[class*="col-"] {
+    float: left;
+    width: 100%;
+  }
+  
+  .row {
+    width: 100%;
+    display: table;
+  }
+  
+  @media only screen and (min-width: 768px) {
+    .row {
+      width: 100%;
+      display: table;
+    }
+  
+    .col-12 {
+      width: 100%;
+    }
+  
+    .col-8 {
+      width: 66.66%;
+    }
+  
+    .col-6 {
+      width: 50%;
+    }
+  
+    .col-4 {
+      width: 33.33%;
+    }
+
+    .col-3 {
+        width: 25%;
+    }
+  }
