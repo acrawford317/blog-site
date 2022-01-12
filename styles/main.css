@@ -2,8 +2,13 @@
     text-decoration: none;
 }
 
+.logout a {
+    text-decoration: none;
+    color: rgb(184, 8, 8);
+}
+
 .post-box {
-    padding: 30px;
+    padding: 60px;
     border-bottom: 1px solid darkgray;
     border-bottom-width: 70%;
 }

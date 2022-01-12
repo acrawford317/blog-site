@@ -4,6 +4,22 @@
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT); // Extra Error Printing
 $mysqli = new mysqli("localhost", "root", "", "blog"); // XAMPP
 
+$user = null;
+
+// Join session or start one
+session_start();
+
+// set user info for the page if logged in 
+if (isset($_SESSION["username"])) {
+    $user = [
+        "username" => $_SESSION["username"]
+    ];
+} else {
+    $user = [
+        "username" => null
+    ];
+}
+
 // get the post with the correct id from db
 if(isset($_GET["article"])){
     $id = $_GET["article"];
@@ -63,9 +79,19 @@ if(isset($_GET["article"])){
                         <a class="nav-link" href="index.php?category=travel">Travel</a>
                     </li>
                 </ul>
-                <ul class="nav navbar-nav ml-auto">
-                    <li class="login"><a href="#"><i class="bi bi-box-arrow-in-right"></i> Login</a></li>
-                </ul>
+                <!-- show either login or logout button -->
+                <?php if($user["username"]==null): ?>
+                    <!-- html code to run if user not logged in -->
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="login"><a href="login.php"><i class="bi bi-box-arrow-in-right"></i> Login</a></li>
+                    </ul>
+                <?php else: ?>
+                    <!-- html code to run if user is logged in -->
+                    <ul class="nav navbar-nav ml-auto">
+                        <p style="margin-right:10px;"><?php echo $user["username"] ?></p>
+                        <li class="logout"><a href="logout.php"><i class="bi bi-box-arrow-left"></i></i> Logout</a></li>
+                    </ul>
+                <?php endif ?>
             </div>
         </div>
     </nav>
@@ -78,8 +104,8 @@ if(isset($_GET["article"])){
                 <p><?php echo $formatedDate?></p>
             </div>
             <div class="col-6">
-                <h1><?php echo $row['title']?></h1>
-                <p><?php echo $row['content']?></p>
+                <h1 style="margin-bottom:25px"><?php echo $row['title']?></h1>
+                <p><?php echo nl2br($row['content'])?></p>
             </div>
             <div class="col-3">
                 <p>Popular Stories</p>
