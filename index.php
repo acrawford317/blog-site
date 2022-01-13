@@ -101,15 +101,23 @@ if(isset($_GET["category"])){
 
     <div class="container">
         <div class="row">
-            <div class="col-6">
+
+
+            <div class="d-flex flex-wrap">
                 <!-- loop through array of posts and display them -->
                 <?php
                     $i=0;
                     while ($row = $result->fetch_assoc()){
                 ?>
-                <div class="post-box">                     
-                    <a href="post.php?article=<?php echo $row["id"] ?>"><h1> <?php echo $row["title"] ?> </h1></a>
-                    <p> <?php echo substr($row["content"], 0, 250) . "..." ?> </p>
+                <div class="flex-shrink-1 post-box"> 
+                    <div class="post">
+                        <a href="post.php?article=<?php echo $row["id"] ?>">
+                            <img class="img-fluid" src="images/<?php echo $row["image_file"]?>" alt="<?php echo $row["image_file"]?>" style="margin-bottom:20px;">
+                            <h1> <?php echo $row["title"] ?> </h1>
+                            <p> <?php echo substr($row["content"], 0, 250) . "..." ?> </p>
+                            <hr style="width:85%; margin: auto; margin-top:30px; margin-bottom: 15px;">
+                        </a>
+                    </div>
                 </div>
                 <?php 
                         $i=$i+1;
@@ -117,9 +125,6 @@ if(isset($_GET["category"])){
                 ?>
             </div>
 
-            <div class="col-6">
-
-            </div>  
         </div>
     </div>
 

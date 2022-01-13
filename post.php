@@ -16,7 +16,7 @@ if (isset($_SESSION["username"])) {
     ];
 } else {
     $user = [
-        "username" => null
+        "username" => "anonymous"
     ];
 }
 
@@ -35,6 +35,16 @@ if(isset($_GET["article"])){
     $date = date_create($row['created']); 
     $formatedDate = date_format($date, "F jS, Y"); 
 } 
+
+// adding comment to db
+if (isset($_POST['submit'])){
+    $comment = $_POST['new-comment'];
+    $insert = $mysqli->prepare("insert into comment (author, content) values (?, ?);");
+    $insert->bind_param("ss", $user["username"], $comment);
+    $insert->execute();
+
+    //header("Location: post.php");
+}
 
 ?>
 
@@ -105,7 +115,10 @@ if(isset($_GET["article"])){
             </div>
             <div class="col-6">
                 <h1 style="margin-bottom:25px"><?php echo $row['title']?></h1>
+                <img class="img-fluid" src="images/<?php echo $row["image_file"]?>" alt="Image Name: <?php echo $row["image_file"]?>"  width="600" height="450" style="margin-bottom:20px;">
+
                 <p><?php echo nl2br($row['content'])?></p>
+
             </div>
             <div class="col-3">
                 <p>Popular Stories</p>
@@ -118,14 +131,30 @@ if(isset($_GET["article"])){
     <div class="container" style="margin-top: 50px;">
         <div class="row">
             <div class="col-12">
-                <h1 style="font-size:20px;">Comments (0):</h1>
-                <form action="" method="post">
-                    <div>
-                        <textarea name="comments" id="comments" style="font-family:sans-serif;font-size:1.2em; width:80%;"  required placeholder="What are your thoughts?"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                    <!-- <input type="submit" value="Submit"> -->
-                </form>
+                <div class="comment-form">
+                    <h1 style="font-size:20px;">Comments (0):</h1>
+                    <form method="post" style="display: flex;">
+                        <label for="new-comment" class="form-label"></label>
+                        <input type="text" class="form-control" id="new-comment" name="new-comment" placeholder="What are your thoughts?" required style="margin-right:20px;"/>
+                        <input type="submit" name="submit" value="Post" class="btn btn-primary" style="float: right;">
+                    </form>
+                </div>
+
+                 <!-- loop through array of comments and display them -->
+                <?php
+                    $i=0;
+                    $result_comments = $mysqli->query("select * from comment;");
+                    while ($row_comment = $result_comments->fetch_assoc()){
+                ?>
+                <div class="comment-box"> 
+                    <p> <?php echo $row_comment["author"] . " " . $row_comment["created"] ?> </p>
+                    <p> <?php echo $row_comment["content"] ?> </p>
+                    <hr style="margin-top:40px;">
+                </div>
+                <?php 
+                        $i=$i+1;
+                    }
+                ?>
             </div>
         </div>
     </div>

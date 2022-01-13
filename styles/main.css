@@ -9,8 +9,9 @@
 
 .post-box {
     padding: 60px;
-    border-bottom: 1px solid darkgray;
-    border-bottom-width: 70%;
+    width: 100%;
+    flex: 0 0 auto;
+
 }
 
 .post-box h1{
@@ -20,6 +21,29 @@
 .post-box a {
     text-decoration: none;
     color: rgb(44, 85, 139);
+}
+
+.post-box p {
+    color: black;
+}
+
+.post {
+    padding: 8px;
+    box-shadow: 0 0 11px rgba(33,33,33,.2); 
+}
+
+.post:hover{
+    box-shadow: 5px 10px 18px #888888;
+    cursor: pointer;
+}
+
+.comment-box {
+    padding: 40px;
+    width: 100%;
+}
+
+.comment-form {
+    width: 100%;
 }
 
 /* Design for mobile first */
@@ -57,5 +81,17 @@
 
     .col-3 {
         width: 25%;
+    }
+
+    .post-box{
+        width:50%;
+    }
+
+    .comment-box {
+        width: 70%;
+    }
+
+    .comment-form {
+        width: 70%;
     }
   }
