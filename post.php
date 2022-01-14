@@ -39,8 +39,8 @@ if(isset($_GET["article"])){
 // adding comment to db
 if (isset($_POST['submit'])){
     $comment = $_POST['new-comment'];
-    $insert = $mysqli->prepare("insert into comment (author, content) values (?, ?);");
-    $insert->bind_param("ss", $user["username"], $comment);
+    $insert = $mysqli->prepare("insert into comment (author, content, post_id) values (?, ?, ?);");
+    $insert->bind_param("ssi", $user["username"], $comment, $id);
     $insert->execute();
 
     //header("Location: post.php");
@@ -164,7 +164,7 @@ if (isset($_POST['submit'])){
                         <?php else: ?>
                             <label for="new-comment" class="form-label"></label>
                             <input type="text" class="form-control" id="new-comment" name="new-comment" placeholder="What are your thoughts?" required style="margin-right:20px;"/> 
-                            <input type="submit" name="submit" value="Post" class="btn btn-primary" style="float: right;">
+                            <input type="submit" name="submit" value="Post" class="btn btn-primary" style="float: right;" onsubmit=reload();>
                         <?php endif ?>
                     </form>
                 </div>
@@ -172,7 +172,7 @@ if (isset($_POST['submit'])){
                  <!-- loop through array of comments and display them -->
                 <?php
                     $i=0;
-                    $result_comments = $mysqli->query("select * from comment;");
+                    $result_comments = $mysqli->query("select * from comment where post_id = '$id' order by created DESC;");
                     while ($row_comment = $result_comments->fetch_assoc()){
                         // format the date the comment was created 
                         $date = date_create($row_comment['created']); 
@@ -184,7 +184,7 @@ if (isset($_POST['submit'])){
                         <span style="color:gray; margin-left:10px; font-size:14px;"> &#8226;</span> 
                         <p style="color:gray; margin-left:10px; font-size:14px;"> <?php echo $formattedDate ?></p>
                     </div>
-                    <p> <?php echo $row_comment["content"] ?> </p>
+                    <p style="margin-left:20px;"> <?php echo $row_comment["content"] ?> </p>
                     <hr style="margin-top:40px;">
                 </div>
                 <?php 

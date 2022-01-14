@@ -23,13 +23,13 @@ if (isset($_SESSION["username"])) {
 // get the posts with the correct category from db
 if(isset($_GET["category"])){
     $category = $_GET["category"];
-    $result = $mysqli->query("select * from post where category = '$category';");
+    $result = $mysqli->query("select * from post where category = '$category' order by id desc;");
 
     if ($result === false) {
         die("MySQL database failed");
     }
 } else{
-    $result = $mysqli->query("select * from post");
+    $result = $mysqli->query("select * from post order by id desc");
 
     if ($result === false) {
         die("MySQL database failed");
@@ -99,9 +99,20 @@ if(isset($_GET["category"])){
         </div>
     </nav>
 
+    <?php if(!isset($_GET["category"])): ?>
+    <div class=container>
+        <div class="row">
+            <div class="col-12 home-welcome">
+                <h1>Welcome!</h1>
+                <p>Enjoy reading about my latest adventures</p>
+                <hr>
+            </div>
+        </div>
+    </div>
+    <?php endif ?>
+
     <div class="container">
         <div class="row">
-
 
             <div class="d-flex flex-wrap">
                 <!-- loop through array of posts and display them -->
