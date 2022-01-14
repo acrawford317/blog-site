@@ -16,7 +16,7 @@ if (isset($_SESSION["username"])) {
     ];
 } else {
     $user = [
-        "username" => "anonymous"
+        "username" => null
     ];
 }
 
@@ -33,7 +33,7 @@ if(isset($_GET["article"])){
 
     // format the date the post was created 
     $date = date_create($row['created']); 
-    $formatedDate = date_format($date, "F jS, Y"); 
+    $formattedDate = date_format($date, "F jS, Y"); 
 } 
 
 // adding comment to db
@@ -70,7 +70,7 @@ if (isset($_POST['submit'])){
 </head>
     
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
         <div class="container-xl">
             <a class="navbar-brand" href="index.php">Blog Name</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -93,7 +93,7 @@ if (isset($_POST['submit'])){
                 <?php if($user["username"]==null): ?>
                     <!-- html code to run if user not logged in -->
                     <ul class="nav navbar-nav ml-auto">
-                        <li class="login"><a href="login.php"><i class="bi bi-box-arrow-in-right"></i> Login</a></li>
+                        <li class="login"><a href="login.php"><i class="bi bi-box-arrow-in-right"></i> Login / Signup</a></li>
                     </ul>
                 <?php else: ?>
                     <!-- html code to run if user is logged in -->
@@ -108,10 +108,10 @@ if (isset($_POST['submit'])){
 
     <div class="container" style="margin-top: 50px;">
         <div class="row">
-            <div class="col-3" style="text-align:center;">
+            <div class="col-2" style="text-align:center;">
                 <h1><i class="bi bi-person-circle"></i></h1>
                 <p><?php echo $row['author']?></p>
-                <p><?php echo $formatedDate?></p>
+                <p><?php echo $formattedDate?></p>
             </div>
             <div class="col-6">
                 <h1 style="margin-bottom:25px"><?php echo $row['title']?></h1>
@@ -120,23 +120,52 @@ if (isset($_POST['submit'])){
                 <p><?php echo nl2br($row['content'])?></p>
 
             </div>
-            <div class="col-3">
-                <p>Popular Stories</p>
+            <div class="col-3" style="margin-left:7%;">
+                <p style="margin-top:35px;">Popular Stories</p>
+
+                <!-- loop through array of popular posts and display them -->
+                <?php
+                    $i=0;
+                    $result_popular = $mysqli->query("select * from post where popular = 1 and id != '$id';");
+                    while ($row_popular = $result_popular->fetch_assoc()){
+                ?>
+                <div class="popular-post-box"> 
+                    <div class="popular-post">
+                        <a href="post.php?article=<?php echo $row_popular["id"] ?>">
+                            <img class="img-fluid" src="images/<?php echo $row_popular["image_file"]?>" alt="<?php echo $row_popular["image_file"]?>" style="margin-bottom:20px;">
+                            <h1> <?php echo $row_popular["title"] ?> </h1>
+                            <p> <?php echo substr($row_popular["content"], 0, 150) . "..." ?> </p>
+                            <hr style="width:85%; margin: auto; margin-top:30px; margin-bottom: 15px;">
+                        </a>
+                    </div>
+                </div>
+                <?php 
+                        $i=$i+1;
+                    }
+                ?>
+
             </div>
         </div>
     </div>
 
 <hr style="width:75%; margin:auto;">
 
-    <div class="container" style="margin-top: 50px;">
+    <div class="container" style="margin-top: 70px;">
         <div class="row">
             <div class="col-12">
                 <div class="comment-form">
-                    <h1 style="font-size:20px;">Comments (0):</h1>
+                    <h1 style="font-size:20px; margin-bottom:25px;"><i class="bi bi-chat-right-text"></i> Comments (0):</h1>
                     <form method="post" style="display: flex;">
-                        <label for="new-comment" class="form-label"></label>
-                        <input type="text" class="form-control" id="new-comment" name="new-comment" placeholder="What are your thoughts?" required style="margin-right:20px;"/>
-                        <input type="submit" name="submit" value="Post" class="btn btn-primary" style="float: right;">
+                        <!-- if not logged in, submit button disabled  -->
+                        <?php if($user["username"]==null): ?>
+                            <label for="new-comment" class="form-label"></label>
+                            <input type="text" class="form-control" id="new-comment" name="new-comment" placeholder="Login to comment" required style="margin-right:20px;" disabled/>
+                            <input type="submit" name="submit" value="Post" class="btn btn-primary" style="float: right;" disabled>
+                        <?php else: ?>
+                            <label for="new-comment" class="form-label"></label>
+                            <input type="text" class="form-control" id="new-comment" name="new-comment" placeholder="What are your thoughts?" required style="margin-right:20px;"/> 
+                            <input type="submit" name="submit" value="Post" class="btn btn-primary" style="float: right;">
+                        <?php endif ?>
                     </form>
                 </div>
 
@@ -145,9 +174,16 @@ if (isset($_POST['submit'])){
                     $i=0;
                     $result_comments = $mysqli->query("select * from comment;");
                     while ($row_comment = $result_comments->fetch_assoc()){
+                        // format the date the comment was created 
+                        $date = date_create($row_comment['created']); 
+                        $formatedDate = date_format($date, "F jS, Y"); 
                 ?>
                 <div class="comment-box"> 
-                    <p> <?php echo $row_comment["author"] . " " . $row_comment["created"] ?> </p>
+                    <div style="display: flex;">
+                        <p><i class="bi bi-person-circle"></i> <?php echo $row_comment["author"] ?></p>
+                        <span style="color:gray; margin-left:10px; font-size:14px;"> &#8226;</span> 
+                        <p style="color:gray; margin-left:10px; font-size:14px;"> <?php echo $formattedDate ?></p>
+                    </div>
                     <p> <?php echo $row_comment["content"] ?> </p>
                     <hr style="margin-top:40px;">
                 </div>

@@ -61,7 +61,7 @@ if(isset($_GET["category"])){
 </head>
     
 <body>
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
         <div class="container-xl">
             <a class="navbar-brand" href="index.php">Blog Name</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,7 +85,7 @@ if(isset($_GET["category"])){
                 <?php if($user["username"]==null): ?>
                     <!-- html code to run if user not logged in -->
                     <ul class="nav navbar-nav ml-auto">
-                        <li class="login"><a href="login.php"><i class="bi bi-box-arrow-in-right"></i> Login</a></li>
+                        <li class="login"><a href="login.php"><i class="bi bi-box-arrow-in-right"></i> Login / Signup</a></li>
                     </ul>
                 <?php else: ?>
                     <!-- html code to run if user is logged in -->
@@ -107,9 +107,13 @@ if(isset($_GET["category"])){
                 <!-- loop through array of posts and display them -->
                 <?php
                     $i=0;
+
+                    $rowcount=mysqli_num_rows($result);
+                    //echo "The total number of rows are: ".$rowcount; 
+                    
                     while ($row = $result->fetch_assoc()){
                 ?>
-                <div class="flex-shrink-1 post-box"> 
+                <div class="post-box"> 
                     <div class="post">
                         <a href="post.php?article=<?php echo $row["id"] ?>">
                             <img class="img-fluid" src="images/<?php echo $row["image_file"]?>" alt="<?php echo $row["image_file"]?>" style="margin-bottom:20px;">
