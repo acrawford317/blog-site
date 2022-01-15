@@ -104,7 +104,7 @@ if(isset($_GET["category"])){
         <div class="row">
             <div class="col-12 home-welcome">
                 <h1>Welcome!</h1>
-                <p>Enjoy reading about my latest adventures</p>
+                <p>Enjoy reading about these latest adventures</p>
                 <hr>
             </div>
         </div>
@@ -114,7 +114,7 @@ if(isset($_GET["category"])){
     <div class="container">
         <div class="row">
 
-            <div class="d-flex flex-wrap">
+            <div class="d-flex flex-wrap" style="margin: 0 auto; width: 90%;">
                 <!-- loop through array of posts and display them -->
                 <?php
                     $i=0;

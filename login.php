@@ -6,12 +6,31 @@ $mysqli = new mysqli("localhost", "root", "", "blog");
 
 $error_msg = "";
 
+ob_start();
+
 // logout component
 session_start();
 session_destroy();
 
 // Join the session or start a new one
 session_start();
+
+$redirect = null;
+// if(isset($_GET["location"])){
+//     $redirect = $_GET["location"];
+//     $redirect_final = str_replace("/blog-site/", "", $redirect);
+//     echo $redirect_final;
+
+// }
+
+if(isset($_GET['location'])) {
+    $redirect = htmlspecialchars($_GET['location']);
+    $redirect = str_replace("/blog-site/", "", $redirect);
+
+    // echo $redirect;
+}
+
+
 
 if (isset($_POST["username"])) { // validate the username coming in
     $stmt = $mysqli->prepare("select * from user where username = ?;");
@@ -31,8 +50,13 @@ if (isset($_POST["username"])) { // validate the username coming in
                 // Save user information into the session to use later
                 $_SESSION["username"] = $data[0]["username"];
 
-                header("Location: index.php");
-                exit();
+                if(isset($redirect)){
+                    header("Location: " . $redirect);
+                    exit();
+                } else{
+                    header("Location: index.php");
+                    exit();
+                }
             } else {
                 // User was found, but entered an invalid password
                 $error_msg = "Invalid Password";
@@ -50,8 +74,13 @@ if (isset($_POST["username"])) { // validate the username coming in
             // Save user information into the session to use later
             $_SESSION["username"] = $_POST["username"];
 
-            header("Location: index.php");
-            exit();
+            if(isset($redirect)){
+                header("Location: " . $redirect);
+                exit();
+            } else{
+                header("Location: index.php");
+                exit();
+            }
         }
     }
 }
@@ -81,7 +110,7 @@ if (isset($_POST["username"])) { // validate the username coming in
                     }
                 ?>
                 <p class="alert-danger" id="error_message"></p>
-                <form action="login.php" method="post">
+                <form action="login.php?location=<?php echo $redirect ?>" method="post">
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
                         <input type="text" class="form-control" id="username" name="username" required/>

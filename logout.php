@@ -10,6 +10,13 @@ $error_msg = "";
 session_start();
 session_destroy();
 
+if(isset($_GET['location'])) {
+    $redirect = htmlspecialchars($_GET['location']);
+    $redirect = str_replace("/blog-site/", "", $redirect);
+
+    header("Location:" . $redirect);
+    exit();}
+
 header("Location: index.php");
 exit();
 
