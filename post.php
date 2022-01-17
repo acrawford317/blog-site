@@ -336,36 +336,50 @@ if(isset($_GET["article"])){
                 
                 var thisClicked = $(this);
                 var comment_id = thisClicked.val();
+                var view_reply_btn_id = 'view-reply-btn-id-' + comment_id;
+                var button_val = document.getElementById(view_reply_btn_id);
 
-                // ajax -> get replies from db
-                var data = {
-                    'comment_id': comment_id,
-                    'replies_load_data': true
-                };
-                $.ajax({
-                    type: "POST",
-                    url: "comments.php",
-                    data: data,
-                    success: function(response){
-                        // loop through comments and add to html to display 
-                        for(var i=0; i<response.length; i++){
-                            thisClicked.closest('.comment-box').find('.reply-box').append("<div class='sub-reply-box' style='margin-left:80px; margin-top:30px;'>" +
-                            "<div style='display: flex;'>" +
-                                "<input type='hidden' class='get-reply-username' value='" + response[i].author + "'></input>" + 
-                                "<p><i class='bi bi-person-circle'></i> " + response[i].author + "</p>" +
-                                "<span style='color:gray; margin-left:10px; font-size:14px;'> &#8226;</span>" + 
-                                "<p style='color:gray; margin-left:10px; font-size:14px;'>" + response[i].date + "</p>" +
-                            "</div>" +
-                            "<p style='margin-left:20px;'>" + response[i].reply + "</p>" +
-                            "<div style='display: flex;' class='sub-reply-btns'>" +
+                if(button_val.innerHTML==' Hide Replies <i class="bi bi-arrow-up"></i>'){
+                    $('.reply-box').html("");
+                    button_val.innerHTML=' View Replies <i class="bi bi-arrow-down"></i>';
+                } else{
+                    // ajax -> get replies from db
+                    var data = {
+                        'comment_id': comment_id,
+                        'replies_load_data': true
+                    };
+                    $.ajax({
+                        type: "POST",
+                        url: "comments.php",
+                        data: data,
+                        success: function(response){
+                            // loop through comments and add to html to display 
+                            for(var i=0; i<response.length; i++){
+                                thisClicked.closest('.comment-box').find('.reply-box').append("<div class='sub-reply-box' style='margin-left:80px; margin-top:30px;'>" +
+                                "<div style='display: flex;'>" +
+                                    "<input type='hidden' class='get-reply-username' value='" + response[i].author + "'></input>" + 
+                                    "<p><i class='bi bi-person-circle'></i> " + response[i].author + "</p>" +
+                                    "<span style='color:gray; margin-left:10px; font-size:14px;'> &#8226;</span>" + 
+                                    "<p style='color:gray; margin-left:10px; font-size:14px;'>" + response[i].date + "</p>" +
+                                "</div>" +
+                                "<p style='margin-left:20px;'>" + response[i].reply + "</p>" +
+                                "<div style='display: flex;' class='sub-reply-btns'>" +
                                 "<button type='button' <?php echo ($user['username']==null) ? "hidden" : "" ?> value='" + response[i].id + "'class='btn btn-outline-secondary sub-reply-btn' style='margin-left:20px;'> Reply </button>" +
-                            "</div>" +
-                            "<div class='sub-reply-section' id='sub-reply-section'>" + "</div>" +
-                            "<hr style='margin-top:40px;'> " +
-                        "</div>");
+                                "</div>" +
+                                "<div class='sub-reply-section' id='sub-reply-section'>" + "</div>" +
+                                "<hr style='margin-top:40px;'> " +
+                            "</div>");
+                            }
+
+                            // toggle button to hide/view replies 
+                            if(button_val.innerHTML==' View Replies <i class="bi bi-arrow-down"></i>'){
+                                button_val.innerHTML=' Hide Replies <i class="bi bi-arrow-up"></i>';
+                            }else if(button_val.innerHTML==' Hide Replies <i class="bi bi-arrow-up"></i>'){
+                                button_val.innerHTML=' View Replies <i class="bi bi-arrow-down"></i>';
+                            }
                         }
-                    }
-                }); 
+                    }); 
+                }
             });
 
             /** CLICK SUB-REPLY BUTTON **/  
@@ -389,7 +403,7 @@ if(isset($_GET["article"])){
              /** CLICK CANCEL-SUB-REPLY BUTTON **/ 
             $(document).on('click', '.sub-reply-cancel-btn', function(e) { 
                 e.preventDefault();
-                
+
                 $('.sub-reply-section').html("");
             });
 
