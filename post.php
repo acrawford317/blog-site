@@ -148,12 +148,12 @@ if(isset($_GET["article"])){
                             <input type="text" class="form-control" id="comment-text-box" name="comment-text-box" placeholder="Login to comment" required style="margin-right:20px;" disabled/>
                             <button type="button" name="add-comment-btn" id="add-comment-btn" class="btn btn-primary add-comment-btn" style="float: right;" disabled>Post</button>
                         <?php else: ?>
-                            <div id="error"></div>
                             <label for="comment-text-box" class="form-label"></label>
                             <input type="text" class="form-control comment-text-box" id="comment-text-box" name="comment-text-box" placeholder="What are your thoughts?" required style="margin-right:20px;"/> 
                             <button type="button" name="add-comment-btn" id="add-comment-btn" class="btn btn-primary add-comment-btn" style="float: right;" onclick="addComment()">Post</button>
                         <?php endif ?>
                     </form>
+                    <div id="error" class="error-msg"></div>
                 </div>
 
                  <!-- comments displayed here -->
@@ -256,9 +256,9 @@ if(isset($_GET["article"])){
 
                             // if comment has no replies, make view view replies button hidden
                             if(response[i].has_replies==true){
-                                html += "<button type='button' id='view-reply-btn-id-" + response[i].id + "' value='" + response[i].id + "'class='btn btn-outline-secondary btn-sm view-reply-btn' style='margin-left:80px;'> View Replies <i class='bi bi-arrow-down'></i></button>";
+                                html += "<button type='button' id='view-reply-btn-id-" + response[i].id + "' value='" + response[i].id + "'class='btn btn-outline-secondary btn-sm view-reply-btn' style='margin-left:20px;'> View Replies <i class='bi bi-arrow-down'></i></button>";
                             } else{
-                                html += "<button type='button' hidden id='view-reply-btn-id-" + response[i].id + "' value='" + response[i].id + "'class='btn btn-outline-secondary view-reply-btn' style='margin-left:20px;'></button>";
+                                html += "<button type='button' hidden id='view-reply-btn-id-" + response[i].id + "' value='" + response[i].id + "'class='btn btn-outline-secondary btn-sm view-reply-btn' style='margin-left:20px;'></button>";
                             }
 
                             html += "</div>" + "<div class='reply-box' id='reply-box'>" + "</div>" + "<hr style='margin-top:40px;'> " + "</div>";
@@ -310,6 +310,10 @@ if(isset($_GET["article"])){
                 var comment_id = thisClicked.closest('.comment-box').find('.reply-btn').val();
                 var reply = thisClicked.closest('.comment-box').find('.reply-msg').val();
                 var view_reply_btn_id = 'view-reply-btn-id-' + comment_id;
+
+                if(reply==""){
+                    return false;
+                }
             
                 var data = {
                     'comment_id': comment_id,
@@ -321,9 +325,11 @@ if(isset($_GET["article"])){
                     url: "comments.php",
                     data: data,
                     success: function(response){
+                        // click view replies button that was hidden to show replies 
                         document.getElementById("reply-text-box").value = "";
+                        document.getElementById(view_reply_btn_id).innerHTML = ' View Replies <i class="bi bi-arrow-down"></i>';
+                        document.getElementById(view_reply_btn_id).hidden = false;
                         document.getElementById(view_reply_btn_id).click();
-                        document.getElementById(view_reply_btn_id).innerHTML = "View Replies";
                     }
                 }); 
             });
@@ -426,9 +432,11 @@ if(isset($_GET["article"])){
                     url: "comments.php",
                     data: data,
                     success: function(response){
+                        // click view replies button that was hidden to show replies 
                         document.getElementById("sub-reply-text-box").value = "";
+                        document.getElementById(view_reply_btn_id).innerHTML = ' View Replies <i class="bi bi-arrow-down"></i>';
+                        document.getElementById(view_reply_btn_id).hidden = false;
                         document.getElementById(view_reply_btn_id).click();
-                        document.getElementById(view_reply_btn_id).innerHTML = "View Replies";
                     }
                 }); 
             });
