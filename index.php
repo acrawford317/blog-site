@@ -4,12 +4,11 @@
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT); // Extra Error Printing
 $mysqli = new mysqli("localhost", "root", "", "blog"); // XAMPP
 
-$user = null;
-
-// Join session or start one
+/** JOIN SESSION OR START ONE **/
 session_start();
 
-// set user info for the page if logged in 
+/** SET USER INFO FOR PAGE **/
+$user = null;
 if (isset($_SESSION["username"])) {
     $user = [
         "username" => $_SESSION["username"]
@@ -20,7 +19,7 @@ if (isset($_SESSION["username"])) {
     ];
 }
 
-// get the posts with the correct category from db
+/** GET POSTS FROM DB **/
 if(isset($_GET["category"])){
     $category = $_GET["category"];
     $result = $mysqli->query("select * from post where category = '$category' order by id desc;");
@@ -38,12 +37,11 @@ if(isset($_GET["category"])){
 
 ?>
 
-
 <!doctype html>
 
 <html lang="en">
 <head>
-    <title>Blog</title>
+    <title>Venture Hut - Home</title>
     
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -61,13 +59,13 @@ if(isset($_GET["category"])){
 </head>
     
 <body>
-      <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+    <!---- NAVBAR ---->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
         <div class="container-xl">
-            <a class="navbar-brand" href="index.php">Blog Name</a>
+            <a class="navbar-brand" href="index.php">Venture Hut</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
@@ -80,7 +78,6 @@ if(isset($_GET["category"])){
                         <a class="nav-link" href="index.php?category=travel">Travel</a>
                     </li>
                 </ul>
-
                 <!-- show either login or logout button -->
                 <?php if($user["username"]==null): ?>
                     <!-- html code to run if user not logged in -->
@@ -94,11 +91,11 @@ if(isset($_GET["category"])){
                         <li class="logout"><a href="logout.php"><i class="bi bi-box-arrow-left"></i></i> Logout</a></li>
                     </ul>
                 <?php endif ?>
-
             </div>
         </div>
     </nav>
 
+    <!---- WELCOME CONTAINER ---->
     <?php if(!isset($_GET["category"])): ?>
     <div class=container>
         <div class="row">
@@ -111,17 +108,13 @@ if(isset($_GET["category"])){
     </div>
     <?php endif ?>
 
+    <!---- POSTS DISPLAYED HERE ---->
     <div class="container">
         <div class="row">
-
             <div class="d-flex flex-wrap" style="margin: 0 auto; width: 90%;">
                 <!-- loop through array of posts and display them -->
                 <?php
                     $i=0;
-
-                    $rowcount=mysqli_num_rows($result);
-                    //echo "The total number of rows are: ".$rowcount; 
-                    
                     while ($row = $result->fetch_assoc()){
                 ?>
                 <div class="post-box"> 
@@ -139,10 +132,10 @@ if(isset($_GET["category"])){
                     }
                 ?>
             </div>
-
         </div>
     </div>
 
+    <!---- FOOTER ---->
     <div class="container">
         <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
             <p class="col-md-4 mb-0 text-muted">&copy; 2022 Company, Inc</p>
@@ -160,5 +153,4 @@ if(isset($_GET["category"])){
         integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
         crossorigin="anonymous"></script>
 </body>
-    
 </html>

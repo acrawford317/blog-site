@@ -15,24 +15,16 @@ session_destroy();
 // Join the session or start a new one
 session_start();
 
+// get previous location to redirect to 
 $redirect = null;
-// if(isset($_GET["location"])){
-//     $redirect = $_GET["location"];
-//     $redirect_final = str_replace("/blog-site/", "", $redirect);
-//     echo $redirect_final;
-
-// }
-
 if(isset($_GET['location'])) {
     $redirect = htmlspecialchars($_GET['location']);
     $redirect = str_replace("/blog-site/", "", $redirect);
-
-    // echo $redirect;
 }
 
 
-
-if (isset($_POST["username"])) { // validate the username coming in
+/** VALIDATE USER **/
+if (isset($_POST["username"])) { 
     $stmt = $mysqli->prepare("select * from user where username = ?;");
     $stmt->bind_param("s", $_POST["username"]);
     if (!$stmt->execute()) {
@@ -43,9 +35,7 @@ if (isset($_POST["username"])) { // validate the username coming in
         $data = $res->fetch_all(MYSQLI_ASSOC);
             
         if (!empty($data)) { 
-            // user was found!
-                
-            // validate the user's password
+            // user was found! validate the user's password
             if (password_verify($_POST["password"], $data[0]["password"])) {
                 // Save user information into the session to use later
                 $_SESSION["username"] = $data[0]["username"];
@@ -86,31 +76,37 @@ if (isset($_POST["username"])) { // validate the username coming in
 }
 
 ?>
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">  
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="author" content="Ashley Crawford">
-        <meta name="description" content="page for login/signup">  
-        <title>Blog Login/Signup</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous"> 
-    </head>
-    <body>
-        <div class="container" style="margin-top: 15px;">
-            <div class="row col-xs-8">
-                <h1>Blog Name</h1>
-                <p> To get started, login below or enter a new username and password to create an account</p>
-            </div>
-            <div class="row justify-content-center">
-                <div class="col-4">
+
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Ashley Crawford">
+    <meta name="description" content="page for login/signup">  
+    <title>Venture Hut - Login/Signup</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous"> 
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div class="container" style="margin-top: 15px;">
+        <div class="row d-flex justify-content-center">
+            <div class="col-4 login-box">
+                <h1>Venture Hut</h1>
+                <p> To get started, login below or enter a new username and password to create an account.</p>
+                <hr style='margin-top:20px;'>
                 <?php
                     if (!empty($error_msg)) {
                         echo "<div class='alert alert-danger'>$error_msg</div>";
                     }
                 ?>
                 <p class="alert-danger" id="error_message"></p>
+                <?php if(isset($redirect)): ?>
                 <form action="login.php?location=<?php echo $redirect ?>" method="post">
+                <?php else: ?>
+                <form action="login.php" method="post">
+                <?php endif ?>
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
                         <input type="text" class="form-control" id="username" name="username" required/>
@@ -121,40 +117,40 @@ if (isset($_POST["username"])) { // validate the username coming in
                         <div id="password_message" class="form-text"></div>
                     </div>
                     <div class="text-center">                
-                    <button type="submit" class="btn btn-primary" id="submit">Log in / Create Account</button>
+                        <button type="submit" class="btn btn-primary" id="submit">Log in / Create Account</button>
                     </div>
                 </form>
-                </div>
             </div>
         </div>
+    </div>
 
 
-        <script type="text/javascript">
+    <script type="text/javascript">
         
-        // check if entered password is long enough
-        var passwordCheck = (num) => {
-            var pw = document.getElementById("password");
-            var password_message = document.getElementById("password_message");
-            var submit = document.getElementById("submit");
+    // check if entered password is long enough
+    var passwordCheck = (num) => {
+        var pw = document.getElementById("password");
+        var password_message = document.getElementById("password_message");
+        var submit = document.getElementById("submit");
             
-            if (pw.value.length < num) {
-                password_message.textContent = "Password must be " + num + " characters or longer";
-                pw.classList.add("is-invalid");
-                submit.disabled = true;
-            } else {
-                password_message.textContent = "";
-                pw.classList.remove("is-invalid");
-                submit.disabled = false;
-            }
+        if (pw.value.length < num) {
+            password_message.textContent = "Password must be " + num + " characters or longer";
+            pw.classList.add("is-invalid");
+            submit.disabled = true;
+        } else {
+            password_message.textContent = "";
+            pw.classList.remove("is-invalid");
+            submit.disabled = false;
         }
+    }
         
-        // event listener for password input
-        document.getElementById("password").addEventListener("keyup", function() {
-            passwordCheck(10); 
-        });
+    // event listener for password input
+    document.getElementById("password").addEventListener("keyup", function() {
+        passwordCheck(10); 
+    });
 
-        </script>
+    </script>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
-    </body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+</body>
 </html>

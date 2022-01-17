@@ -42,7 +42,7 @@ if(isset($_GET["article"])){
 
 <html lang="en">
 <head>
-    <title>Blog Post</title>
+    <title>Venture Hut</title>
     
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -65,7 +65,7 @@ if(isset($_GET["article"])){
     <!---- NAVBAR ---->
     <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
         <div class="container-xl">
-            <a class="navbar-brand" href="index.php">Blog Name</a>
+            <a class="navbar-brand" href="index.php">Venture Hut</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -87,13 +87,13 @@ if(isset($_GET["article"])){
                     <!-- html code to run if user not logged in -->
                     <ul class="nav navbar-nav ml-auto">
                         <?php ?>
-                        <li class="login"><a href="<?php echo "login.php?location=" . urlencode($_SERVER['REQUEST_URI']) ?>"><i class="bi bi-box-arrow-in-right"></i> Login / Signup</a></li>
+                        <li class="login"><a id="login-logout" href="<?php echo "login.php?location=" . urlencode($_SERVER['REQUEST_URI']) ?>"><i class="bi bi-box-arrow-in-right"></i> Login / Signup</a></li>
                     </ul>
                 <?php else: ?>
                     <!-- html code to run if user is logged in -->
                     <ul class="nav navbar-nav ml-auto">
                         <p style="margin-right:10px;"><?php echo $user["username"] ?></p>
-                        <li class="logout"><a href="<?php echo "logout.php?location=" . urlencode($_SERVER['REQUEST_URI']) ?>"><i class="bi bi-box-arrow-left"></i></i> Logout</a></li>
+                        <li class="logout"><a id="login-logout" href="<?php echo "logout.php?location=" . urlencode($_SERVER['REQUEST_URI']) ?>"><i class="bi bi-box-arrow-left"></i></i> Logout</a></li>
                     </ul>
                 <?php endif ?>
             </div>
@@ -104,19 +104,27 @@ if(isset($_GET["article"])){
     <div class="container" style="margin-top: 50px;">
         <div class="row">
             <!-- author -->
-            <div class="col-2" style="text-align:center;">
+            <div class="col-2 author-box" style="text-align:center;">
                 <h1><i class="bi bi-person-circle"></i></h1>
                 <p><?php echo $row['author']?></p>
                 <p><?php echo $formattedDate?></p>
+                <hr style='margin-top:40px; width:85%; margin:auto; margin-bottom: 17px;'>
+                <div>
+                    <button class="social-media-button"><i class="bi bi-facebook"></i></button>
+                    <button class="social-media-button"><i class="bi bi-instagram"></i></button>
+                    <button class="social-media-button"><i class="bi bi-twitter"></i></button>
+                </div>
             </div>
             <!-- post title, image, content -->
-            <div class="col-6">
+            <div class="col-6 post-column">
                 <h1 style="margin-bottom:25px"><?php echo $row['title']?></h1>
+                <hr style="width:100%; margin: auto; margin-bottom: 30px;">
                 <img class="img-fluid" src="images/<?php echo $row["image_file"]?>" alt="Image Name: <?php echo $row["image_file"]?>"  width="600" height="450" style="margin-bottom:20px;">
                 <p><?php echo nl2br($row['content'])?></p>
             </div>
-            <div class="col-3" style="margin-left:7%;">
+            <div class="col-3" style="margin-left:5%;">
                 <p style="margin-top:35px;">Popular Stories</p>
+                <hr style="width:100%; margin: auto; margin-top:15px; margin-bottom: 30px;">
 
                 <!-- loop through array of popular posts and display them -->
                 <?php
@@ -142,25 +150,25 @@ if(isset($_GET["article"])){
         </div>
     </div>
 
-<hr style="width:75%; margin:auto;">
+<hr style="width:70%; margin:auto; margin-bottom:20px; margin-top:30px;">
 
     <!---- COMMENT SECTION ---->
     <div class="container" style="margin-top: 70px;">
         <div class="row">
-            <div class="col-12">
+            <div class="col-12 comment-column">
                 <div class="comment-form">
                     <h1 style="font-size:20px; margin-bottom:25px;"><i class="bi bi-chat-right-text"></i> Comments (0):</h1>
                     <form style="display: flex;">
                         <!-- if not logged in, submit button disabled  -->
                         <?php if($user["username"]==null): ?>
-                            <label for="new-comment" class="form-label"></label>
-                            <input type="text" class="form-control" id="new-comment" name="new-comment" placeholder="Login to comment" required style="margin-right:20px;" disabled/>
-                            <input type="submit" name="submit" value="Post" class="btn btn-primary" style="float: right;" disabled>
+                            <label for="comment-text-box" class="form-label"></label>
+                            <input type="text" class="form-control" id="comment-text-box" name="comment-text-box" placeholder="Login to comment" required style="margin-right:20px;" disabled/>
+                            <button type="button" name="add-comment-btn" id="add-comment-btn" class="btn btn-primary add-comment-btn" style="float: right;" disabled>Post</button>
                         <?php else: ?>
                             <div id="error"></div>
                             <label for="comment-text-box" class="form-label"></label>
                             <input type="text" class="form-control comment-text-box" id="comment-text-box" name="comment-text-box" placeholder="What are your thoughts?" required style="margin-right:20px;"/> 
-                            <button type="button" name="add-comment-btn" class="btn btn-primary add-comment-btn" style="float: right;" onclick="myFunction()">Post</button>
+                            <button type="button" name="add-comment-btn" id="add-comment-btn" class="btn btn-primary add-comment-btn" style="float: right;" onclick="myFunction()">Post</button>
                         <?php endif ?>
                     </form>
                 </div>
@@ -235,8 +243,6 @@ if(isset($_GET["article"])){
 
             // get article id from url 
             var queryString = window.location.search;
-            console.log(queryString);
-            console.log(typeof queryString);
             var id_url = new URLSearchParams(queryString);
             const pattern = /article=/g;
             var id = id_url.toString().replace(pattern, "");
@@ -254,32 +260,209 @@ if(isset($_GET["article"])){
 
                         // loop through comments and add to html to display 
                         for(var i=0; i<response.length; i++){
-                            $(".comment-container").append("<div class='comment-box' style='margin-left:10px;'>" +
+                            html = "";
+
+                            html += "<div class='comment-box' style='margin-left:10px;'>" +
             "<div style='display: flex;'>" +
                 "<p><i class='bi bi-person-circle'></i> " + response[i].author + "</p>" +
                 "<span style='color:gray; margin-left:10px; font-size:14px;'> &#8226;</span>" + 
                 "<p style='color:gray; margin-left:10px; font-size:14px;'>" + response[i].date + "</p>" +
             "</div>" +
             "<p style='margin-left:20px;'>" + response[i].comment + "</p>" +
-            "<div style='display: flex;'>" +
-                "<button type='button' class='btn btn-outline-secondary' style='margin-left:20px;'> Reply </button>" +
-                "<button type='button' class='btn btn-outline-secondary' style='margin-left:10px;'><i class='bi bi-hand-thumbs-up'></i></button>" +
-                "<button type='button' class='btn btn-outline-secondary' style='margin-left:10px'><i class='bi bi-hand-thumbs-down'></i></button>" +
-            "</div>" +
-            "<div class='reply-box' style='display:none' id='reply-box'>" +
-                "<textarea cols='35' rows='8'></textarea><br/>" +
-                "<button class='cancelbutton'>Cancel</button><br/><br/>" +
+            "<div class='comment-buttons' style='display: flex;'>" +
+                "<button type='button' <?php echo ($user['username']==null) ? "hidden" : "" ?> value='" + response[i].id + "'class='btn btn-outline-secondary reply-btn' style='margin-left:20px;' > Reply </button>";
+
+                if(response[i].has_replies==true){
+                    html += "<button type='button' id='view-reply-btn-id-" + response[i].id + "' value='" + response[i].id + "'class='btn btn-outline-secondary btn-sm view-reply-btn' style='margin-left:80px;'> View Replies <i class='bi bi-arrow-down'></i></button>";
+                } else{
+                    html += "<button type='button' hidden id='view-reply-btn-id-" + response[i].id + "' value='" + response[i].id + "'class='btn btn-outline-secondary view-reply-btn' style='margin-left:20px;'></button>";
+                }
+
+            html += "</div>" +
+            "<div class='reply-box' id='reply-box'>" +
             "</div>" +
             "<hr style='margin-top:40px;'> " +
-        "</div>"
-                            );
+        "</div>";
+
+                        $(".comment-container").append(html);
+
                         }
+
+                        // document.getElementById.innerHTML = "";
                     }
                 });
         }
 
         // display comments 
         getComments();
+
+        // event listener if user hits enter instead of post comment btn
+        document.getElementById('comment-text-box').onkeypress=function(e){
+            if(e.keyCode==13){
+                event.preventDefault();
+                document.getElementById('add-comment-btn').click();
+                getComments();
+            }
+        }
+
+        $(document).ready(function() {
+
+            // handle click reply button 
+            $(document).on('click', '.reply-btn', function() { 
+
+                var thisClicked = $(this);
+                var comment_id = thisClicked;
+
+                $('.reply-box').html("");
+
+                thisClicked.closest('.comment-box').find('.reply-box').html('\
+                    <input type="text" id="reply-text-box" class="reply-msg form-control my-2" placeholder="Reply">\
+                        <div class="text-end">\
+                        <button class="btn btn-sm btn-primary reply-add-btn">Reply</button>\
+                        <button class="btn btn-sm btn-danger reply-cancel-btn">Cancel</button>\
+                    </div>');
+            });
+
+            // handle click cancel reply button 
+            $(document).on('click', '.reply-cancel-btn', function() { 
+                $('.reply-box').html("");
+            });
+
+            // handle click add reply button 
+            $(document).on('click', '.reply-add-btn', function(e) { 
+                e.preventDefault();
+
+                var thisClicked = $(this);
+                var comment_id = thisClicked.closest('.comment-box').find('.reply-btn').val();
+                var reply = thisClicked.closest('.comment-box').find('.reply-msg').val();
+                var view_reply_btn_id = 'view-reply-btn-id-' + comment_id;
+            
+                var data = {
+                    'comment_id': comment_id,
+                    'reply_content': reply,
+                    'add_reply': true
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "code.php",
+                    data: data,
+                    success: function(response){
+                        document.getElementById("reply-text-box").value = "";
+
+                        //getComments();
+                        //alert(view_reply_btn_id);
+                        document.getElementById(view_reply_btn_id).click();
+                        document.getElementById(view_reply_btn_id).innerHTML = "View Replies";
+                    }
+                }); 
+
+
+            });
+
+            // handle click view replies button 
+            $(document).on('click', '.view-reply-btn', function(e) { 
+                e.preventDefault();
+
+                $('.reply-box').html("");
+                
+                var thisClicked = $(this);
+                var comment_id = thisClicked.val();
+
+                // ajax -> get replies from db
+                var data = {
+                    'comment_id': comment_id,
+                    //'reply_content': reply,
+                    'replies_load_data': true
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "code.php",
+                    data: data,
+                    success: function(response){
+                        //$(".comment-container").html("");
+
+                    // loop through comments and add to html to display 
+                     for(var i=0; i<response.length; i++){
+                        thisClicked.closest('.comment-box').find('.reply-box').append("<div class='sub-reply-box' style='margin-left:80px; margin-top:30px;'>" +
+            "<div style='display: flex;'>" +
+                "<input type='hidden' class='get-reply-username' value='" + response[i].author + "'></input>" + 
+                "<p><i class='bi bi-person-circle'></i> " + response[i].author + "</p>" +
+                "<span style='color:gray; margin-left:10px; font-size:14px;'> &#8226;</span>" + 
+                "<p style='color:gray; margin-left:10px; font-size:14px;'>" + response[i].date + "</p>" +
+            "</div>" +
+            "<p style='margin-left:20px;'>" + response[i].reply + "</p>" +
+            "<div style='display: flex;' class='sub-reply-btns'>" +
+                "<button type='button' <?php echo ($user['username']==null) ? "hidden" : "" ?> value='" + response[i].id + "'class='btn btn-outline-secondary sub-reply-btn' style='margin-left:20px;'> Reply </button>" +
+            "</div>" +
+            "<div class='sub-reply-section' id='sub-reply-section'>" +
+            "</div>" +
+            "<hr style='margin-top:40px;'> " +
+        "</div>");
+                        }
+                    }
+                }); 
+
+
+            });
+
+
+            // handle click sub-reply button 
+            $(document).on('click', '.sub-reply-btn', function(e) { 
+                e.preventDefault();
+
+                var thisClicked = $(this);
+                var comment_id = thisClicked;
+                var reply_username = thisClicked.closest('.sub-reply-box').find('.get-reply-username').val();
+
+                $('.sub-reply-section').html("");
+
+                thisClicked.closest('.sub-reply-box').find('.sub-reply-section').html('\
+                <input type="text" id="sub-reply-text-box" class="sub-reply-msg form-control my-2" value="@' + reply_username + ' " placeholder="Reply">\
+                    <div class="text-end">\
+                    <button class="btn btn-sm btn-primary sub-reply-add-btn">Reply</button>\
+                    <button class="btn btn-sm btn-danger sub-reply-cancel-btn">Cancel</button>\
+                </div>');
+            });
+
+            // handle click cancel-sub-reply button 
+            $(document).on('click', '.sub-reply-cancel-btn', function(e) { 
+                e.preventDefault();
+
+                $('.sub-reply-section').html("");
+            });
+
+            // handle click add-sub-reply button 
+            $(document).on('click', '.sub-reply-add-btn', function(e) { 
+                e.preventDefault();
+
+                var thisClicked = $(this);
+                var comment_id = thisClicked.closest('.comment-box').find('.reply-btn').val();
+                var reply = thisClicked.closest('.sub-reply-box').find('.sub-reply-msg').val();
+                var view_reply_btn_id = 'view-reply-btn-id-' + comment_id;
+            
+                var data = {
+                    'comment_id': comment_id,
+                    'reply_content': reply,
+                    'add_reply': true
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "code.php",
+                    data: data,
+                    success: function(response){
+                        document.getElementById("sub-reply-text-box").value = "";
+                        document.getElementById(view_reply_btn_id).click();
+                        document.getElementById(view_reply_btn_id).innerHTML = "View Replies";
+                    }
+                }); 
+
+
+            });
+
+
+
+        });
+
 
     </script> 
     
