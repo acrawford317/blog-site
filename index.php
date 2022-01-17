@@ -1,23 +1,7 @@
 <?php
 
 /** DATABASE SETUP **/
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT); // Extra Error Printing
-$mysqli = new mysqli("localhost", "root", "", "blog"); // XAMPP
-
-/** JOIN SESSION OR START ONE **/
-session_start();
-
-/** SET USER INFO FOR PAGE **/
-$user = null;
-if (isset($_SESSION["username"])) {
-    $user = [
-        "username" => $_SESSION["username"]
-    ];
-} else {
-    $user = [
-        "username" => null
-    ];
-}
+include('db_connection.php');
 
 /** GET POSTS FROM DB **/
 if(isset($_GET["category"])){
@@ -41,7 +25,7 @@ if(isset($_GET["category"])){
 
 <html lang="en">
 <head>
-    <title>Venture Hut - Home</title>
+    <title>Venture Hut</title>
     
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
