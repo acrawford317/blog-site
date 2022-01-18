@@ -15,7 +15,8 @@ if(isset($_GET['location'])) {
     $redirect = str_replace("/blog-site/", "", $redirect);
 
     header("Location:" . $redirect);
-    exit();}
+    exit();
+}
 
 header("Location: index.php");
 exit();

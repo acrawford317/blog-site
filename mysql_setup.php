@@ -4,6 +4,7 @@
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
     $db = new mysqli("localhost", "root", "", "blog"); // XAMPP
     
+    /** USER **/
     $db->query("drop table if exists user;");
     $db->query("create table user (
         id int not null auto_increment,
@@ -11,12 +12,14 @@
         password text not null,
         primary key (id));");
     
+    /** CATEGORY **/
     $db->query("drop table if exists category;");
     $db->query("create table category (
         id int not null auto_increment,
         name text not null,
         primary key (id));");
 
+    /** POST **/
     $db->query("drop table if exists post;");
     $db->query("create table post (
         id int not null auto_increment,
@@ -29,16 +32,17 @@
         created datetime not null default current_timestamp(),
         primary key (id))");
 
+    /** COMMENT **/
     $db->query("drop table if exists comment;");
     $db->query("create table comment (
         id int not null auto_increment,
         author text not null,
         content text not null,
         post_id int not null,
-        parent_id int not null default 0,
         created datetime not null default current_timestamp(),
         primary key (id));");
     
+    /** REPLY **/
     $db->query("drop table if exists reply;");
     $db->query("create table reply (
         id int not null auto_increment,

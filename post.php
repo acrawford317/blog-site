@@ -261,7 +261,7 @@ if(isset($_GET["article"])){
                                 html += "<button type='button' hidden id='view-reply-btn-id-" + response[i].id + "' value='" + response[i].id + "'class='btn btn-outline-secondary btn-sm view-reply-btn' style='margin-left:20px;'></button>";
                             }
 
-                            html += "</div>" + "<div class='reply-box' id='reply-box'>" + "</div>" + "<hr style='margin-top:40px;'> " + "</div>";
+                            html += "</div>" + "<div class='reply-box' id='reply-box-" + response[i].id + "'>" + "</div>" + "<hr style='margin-top:40px;'> " + "</div>";
 
                             $(".comment-container").append(html);
                         }
@@ -287,6 +287,15 @@ if(isset($_GET["article"])){
             $(document).on('click', '.reply-btn', function() { 
                 var thisClicked = $(this);
                 var comment_id = thisClicked;
+                var view_reply_btn_id = 'view-reply-btn-id-' + comment_id;
+                var button_val = document.getElementById(view_reply_btn_id);
+                var reply_box_id = 'reply-box-' + comment_id;
+
+                // toggle view replies buttons if neccesary 
+                var a = document.getElementsByClassName('view-reply-btn');
+                for (var i = 0; i < a.length; i++) {
+                    a[i].innerHTML = " View Replies <i class='bi bi-arrow-down'></i>";
+                }
                 $('.reply-box').html("");
 
                 thisClicked.closest('.comment-box').find('.reply-box').html('\
@@ -299,6 +308,11 @@ if(isset($_GET["article"])){
 
             /** CLICK CANCEL REPLY BUTTON **/ 
             $(document).on('click', '.reply-cancel-btn', function() { 
+                // toggle view replies buttons if necessary 
+                var a = document.getElementsByClassName('view-reply-btn');
+                for (var i = 0; i < a.length; i++) {
+                    a[i].innerHTML = " View Replies <i class='bi bi-arrow-down'></i>";
+                }
                 $('.reply-box').html("");
             });
 
@@ -311,6 +325,7 @@ if(isset($_GET["article"])){
                 var reply = thisClicked.closest('.comment-box').find('.reply-msg').val();
                 var view_reply_btn_id = 'view-reply-btn-id-' + comment_id;
 
+                // don't post if reply is empty 
                 if(reply==""){
                     return false;
                 }
@@ -327,6 +342,7 @@ if(isset($_GET["article"])){
                     success: function(response){
                         // click view replies button that was hidden to show replies 
                         document.getElementById("reply-text-box").value = "";
+                        thisClicked.closest('.comment-box').find('.reply-box').html("");
                         document.getElementById(view_reply_btn_id).innerHTML = ' View Replies <i class="bi bi-arrow-down"></i>';
                         document.getElementById(view_reply_btn_id).hidden = false;
                         document.getElementById(view_reply_btn_id).click();
@@ -337,16 +353,15 @@ if(isset($_GET["article"])){
             /** CLICK VIEW REPLY BUTTON **/  
             $(document).on('click', '.view-reply-btn', function(e) { 
                 e.preventDefault();
-
-                $('.reply-box').html("");
                 
                 var thisClicked = $(this);
                 var comment_id = thisClicked.val();
                 var view_reply_btn_id = 'view-reply-btn-id-' + comment_id;
                 var button_val = document.getElementById(view_reply_btn_id);
+                var reply_box_id = 'reply-box-' + comment_id;
 
                 if(button_val.innerHTML==' Hide Replies <i class="bi bi-arrow-up"></i>'){
-                    $('.reply-box').html("");
+                    document.getElementById(reply_box_id).innerHTML = "";
                     button_val.innerHTML=' View Replies <i class="bi bi-arrow-down"></i>';
                 } else{
                     // ajax -> get replies from db
@@ -421,6 +436,11 @@ if(isset($_GET["article"])){
                 var comment_id = thisClicked.closest('.comment-box').find('.reply-btn').val();
                 var reply = thisClicked.closest('.sub-reply-box').find('.sub-reply-msg').val();
                 var view_reply_btn_id = 'view-reply-btn-id-' + comment_id;
+
+                // don't post if reply is empty 
+                if(reply==""){
+                    return false;
+                }
             
                 var data = {
                     'comment_id': comment_id,
@@ -432,11 +452,13 @@ if(isset($_GET["article"])){
                     url: "comments.php",
                     data: data,
                     success: function(response){
-                        // click view replies button that was hidden to show replies 
                         document.getElementById("sub-reply-text-box").value = "";
-                        document.getElementById(view_reply_btn_id).innerHTML = ' View Replies <i class="bi bi-arrow-down"></i>';
-                        document.getElementById(view_reply_btn_id).hidden = false;
+                        thisClicked.closest('.sub-reply-box').find('.sub-reply-section').html("");
+
+                        // click hide and view replies button to show updated replies 
                         document.getElementById(view_reply_btn_id).click();
+                        document.getElementById(view_reply_btn_id).click();
+
                     }
                 }); 
             });
